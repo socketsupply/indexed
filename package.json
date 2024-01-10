@@ -1,12 +1,17 @@
 {
-  "name": "indexed",
+  "name": "@socketsupply/indexed",
   "type": "module",
   "version": "1.0.0",
-  "description": "",
+  "description": "A small async/await wrapper around IndexedDB.",
   "main": "src/index.js",
   "scripts": {
-    "test": "ssc build -r"
+    "test": "ssc build -r test"
   },
-  "author": "",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/socketsupply/indexed.git"
+  },
+  "author": "socketsupply",
   "license": "ISC"
 }
