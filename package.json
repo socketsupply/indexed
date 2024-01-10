@@ -1,0 +1,12 @@
+{
+  "name": "indexed",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "ssc build -r"
+  },
+  "author": "",
+  "license": "ISC"
+}
