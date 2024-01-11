@@ -16,4 +16,4 @@ npm run test
 
 # API
 
-See docs and tests for more info.
+See [docs](./docs/index.md) and [tests](./test/test.js) for more info.

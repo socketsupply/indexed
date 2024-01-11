@@ -1,8 +1,24 @@
+/**
+ * Helper function to create a transaction and object store.
+ * @param {IDBDatabase} db - The indexedDB database.
+ * @param {string} loc - The location or name of the object store.
+ * @param {string} [type='readwrite'] - The type of transaction (default is 'readwrite').
+ * @returns {Object} - An object containing the transaction and object store.
+ */
 const getStore = (db, loc, type = 'readwrite') => {
-  const tx = db.transaction(loc, type)
-  return { tx, store: tx.objectStore(loc) }
+  try {
+    const tx = db.transaction(loc, type);
+    return { tx, store: tx.objectStore(loc) };
+  } catch (error) {
+    return Promise.reject({ err: error });
+  }
 }
 
+/**
+ * Helper function to create an IDBKeyRange based on the provided options.
+ * @param {Object} o - Options object containing lt, gt, lte, and gte properties.
+ * @returns {IDBKeyRange} - An IDBKeyRange object.
+ */
 const getRange = o => {
   const exLower = typeof o.lt !== 'undefined'
   const exUpper = typeof o.gt !== 'undefined'
@@ -35,11 +51,21 @@ export class Indexed {
     this._db = null
   }
 
+  /**
+   * Static method to open an IndexedDB database.
+   * @param {...*} args - Arguments passed to the constructor.
+   * @returns {Promise<Indexed>} - A promise resolving to an instance of the Indexed class.
+   */
   static async open (...args) {
     const indexed = new Indexed(...args)
     return await indexed.init()
   }
 
+  /**
+   * Static method to delete an IndexedDB database.
+   * @param {string} loc - The location or name of the object store.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   static async drop (loc) {
     return new Promise(resolve => {
       const r = window.indexedDB.deleteDatabase(loc)
@@ -49,6 +75,10 @@ export class Indexed {
     })
   }
 
+  /**
+   * Initializes the IndexedDB instance.
+   * @returns {Promise<Indexed>} - A promise resolving to the initialized instance of the Indexed class.
+   */
   init () {
     return new Promise(resolve => {
       const r = window.indexedDB.open(this._loc)
@@ -75,6 +105,10 @@ export class Indexed {
     })
   }
 
+  /**
+   * Counts the number of records in the object store.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   count () {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc)
@@ -85,6 +119,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Checks if a record with the given key exists in the object store.
+   * @param {*} key - The key to check for existence.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   has (key) {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc)
@@ -99,6 +138,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Retrieves the value of a record with the given key from the object store.
+   * @param {*} key - The key of the record to retrieve.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   get (key) {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc, 'readonly')
@@ -116,6 +160,12 @@ export class Indexed {
     })
   }
 
+  /**
+   * Puts a key-value pair into the object store.
+   * @param {*} key - The key of the record.
+   * @param {*} value - The value of the record.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   put (key, value) {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc)
@@ -128,6 +178,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Deletes a record with the given key from the object store.
+   * @param {*} key - The key of the record to delete.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   del (key) {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc)
@@ -140,6 +195,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Performs a batch operation on the object store.
+   * @param {Array<Object>} ops - An array of operations (put or del) to perform in the batch.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   batch (ops) {
     return new Promise(resolve => {
       const { tx, store } = getStore(this._db, this._loc)
@@ -163,6 +223,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Reads all records from the object store based on the provided options.
+   * @param {Object} opts - Options for reading records.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   readAll (opts) {
     return new Promise(resolve => {
       this.read(opts).then(({ events }) => {
@@ -177,6 +242,11 @@ export class Indexed {
     })
   }
 
+  /**
+   * Reads records from the object store based on the provided options.
+   * @param {Object} [opts={}] - Options for reading records.
+   * @returns {Promise<Object>} - A promise resolving to an object with data or error information.
+   */
   read (opts = {}) {
     return new Promise(resolve => {
       const { store } = getStore(this._db, this._loc, 'readonly')
