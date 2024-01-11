@@ -13,5 +13,8 @@
     "url": "git+ssh://git@github.com/socketsupply/indexed.git"
   },
   "author": "socketsupply",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@socketsupply/socket": "^0.5.4"
+  }
 }
