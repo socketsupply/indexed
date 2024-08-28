@@ -61,6 +61,10 @@ export class Indexed {
     return await indexed.init()
   }
 
+  static async list () {
+    return await indexedDB.databases()
+  }
+
   /**
    * Static method to delete an IndexedDB database.
    * @param {string} loc - The location or name of the object store.
