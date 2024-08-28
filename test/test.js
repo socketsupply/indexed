@@ -5,7 +5,7 @@ import Indexed from './index.js'
 const db = await Indexed.open('test')
 
 test('open', async t => {
-  const databases = await window.indexedDB.databases()
+  const databases = await Indexed.list()
   console.log(databases.length, 'some databases')
   for (const { name } of databases) await Indexed.drop(name)
   console.log((await window.indexedDB.databases()).length, 'no databases')
@@ -231,4 +231,5 @@ test('readall...', async t => {
 
 test('cleanup', t => {
   process.exit(0)
+  window.close()
 })
